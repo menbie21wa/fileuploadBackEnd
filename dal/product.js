@@ -1,5 +1,6 @@
 const Model = require("../models");
-const Product = Model.product;
+const Product = Model.Product;
+const Product_Spec= Model.Product_specs;
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
@@ -44,7 +45,11 @@ exports.create = async (productData, cb) => {
 
   exports.getByPk = async (query, cb) => {
     try {
-      let product = await Product.findByPk(query);
+      let product = await Product.findByPk(query,{
+        include: [ 
+          {model: Product_Spec} 
+       ]
+      });
       return cb(null, product?.dataValues);
     } catch (err) {
       return cb(err);

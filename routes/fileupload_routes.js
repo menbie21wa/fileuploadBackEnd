@@ -82,6 +82,14 @@ router.post(
       name: 'studyDesign',
       maxCount: 1,
     },
+    {
+      name: 'images',
+      maxCount: 1,
+    },
+    {
+      name: 'workExperience',
+      maxCount: 1,
+    },
   ]),
 
   fileuploadController.uploadImage
