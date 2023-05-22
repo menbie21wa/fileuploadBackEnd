@@ -123,7 +123,21 @@ exports.uploadImage = (req, res, next) => {
       ) {
         fileData.contractForm = fileData.contractForm[0].filename;
       }
-
+      if (
+        fileData &&
+        fileData.images &&
+        fileData.images[0].fieldname !== ''
+      ) {
+        fileData.images = fileData.images[0].filename;
+      }
+      if (
+        fileData &&
+        fileData.workExperience &&
+        fileData.workExperience[0].fieldname !== ''
+      ) {
+        fileData.workExperience = fileData.workExperience[0].filename;
+      }
+      
       workflow.emit('respond', fileData);
     }
   });
