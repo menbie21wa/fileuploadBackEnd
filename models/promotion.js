@@ -7,9 +7,9 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
-      // define association here
-    }
+    // static associate(models) {
+    //   // define association here
+    // }
   }
   Promotion.init(
     {
@@ -30,5 +30,13 @@ module.exports = (sequelize, DataTypes) => {
       modelName: 'Promotion',
     }
   );
+  Promotion.associate = function (models) {
+    Promotion.belongsTo(models.Organization, {
+      foreignKey: 'orgId',
+      //onDelete: 'CASCADE',
+    });
+
+    // associations can be defined here
+  };
   return Promotion;
 };

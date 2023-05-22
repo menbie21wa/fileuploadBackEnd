@@ -28,5 +28,14 @@ module.exports = (sequelize, DataTypes) => {
       modelName: 'Training',
     }
   );
+
+  Training.associate = function (models) {
+    Training.belongsTo(models.Organization, {
+      foreignKey: 'orgId',
+      //onDelete: 'CASCADE',
+    });
+
+    // associations can be defined here
+  };
   return Training;
 };

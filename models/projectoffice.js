@@ -30,5 +30,13 @@ module.exports = (sequelize, DataTypes) => {
       modelName: 'Projectoffice',
     }
   );
+  Projectoffice.associate = function (models) {
+    Projectoffice.belongsTo(models.Organization, {
+      foreignKey: 'orgId',
+      //onDelete: 'CASCADE',
+    });
+
+    // associations can be defined here
+  };
   return Projectoffice;
 };

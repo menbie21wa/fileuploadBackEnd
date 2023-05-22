@@ -7,9 +7,9 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
-      // define association here
-    }
+    // static associate(models) {
+    //   // define association here
+    // }
   }
   JobSkill.init(
     {
@@ -30,5 +30,14 @@ module.exports = (sequelize, DataTypes) => {
       modelName: 'JobSkill',
     }
   );
+
+  JobSkill.associate = function (models) {
+    JobSkill.belongsTo(models.Organization, {
+      foreignKey: 'orgId',
+      //onDelete: 'CASCADE',
+    });
+
+    // associations can be defined here
+  };
   return JobSkill;
 };
