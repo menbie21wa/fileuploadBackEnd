@@ -7,46 +7,52 @@ module.exports = {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
       },
       licencedProject: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       dayMonthPlan: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       salaryFile: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       monthlyReport: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       advertisingRegulation: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       accountingHrRegulation: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       letterRule: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       contractRule: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       orgId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Organizations', // name of Target model
+          key: 'id', // key in Target model that we're referencing
+        },
+        //onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
-      }
+        type: Sequelize.DATE,
+      },
     });
   },
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Projects');
-  }
+  },
 };

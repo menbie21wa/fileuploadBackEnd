@@ -31,7 +31,13 @@ module.exports = {
         type: Sequelize.STRING
       },
       orgId: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'Organizations', // name of Target model
+          key: 'id', // key in Target model that we're referencing
+        },
+        //onUpdate: 'CASCADE',
+        onDelete: 'SET NULL',
       },
       beforeAfter3500: {
         type: Sequelize.STRING
