@@ -6,6 +6,7 @@ const Op = Sequelize.Op;
 // console.log("user dal");
 const TefWof = Model.Tef_Wof
 const Hasab= Model.Hasab
+const Product=Model.Product
 
 exports.create = async (userData, cb) => {
   
@@ -47,10 +48,10 @@ exports.getCollection = async (query, cb) => {
 exports.getByPk = async (query, cb) => {
   try {
     let user = await User.findByPk(query,{
-      include: [
-       {model: TefWof},
-       {model: Hasab}
-        
+       include: [
+        {model: TefWof},
+        {model: Hasab},
+        {model: Product}  
     ]
     });
     return cb(null, user?.dataValues);

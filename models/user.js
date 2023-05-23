@@ -66,6 +66,11 @@ module.exports = (sequelize, DataTypes) => {
 
       //onDelete: 'CASCADE'
     });
+    User.hasMany(models.Product, {
+      foreignKey: 'userId',
+
+      //onDelete: 'CASCADE'
+    });
   };
   return User;
 };

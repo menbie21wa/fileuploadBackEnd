@@ -1,5 +1,5 @@
 const Model = require("../models");
-const Specification = Model.product_specification;
+const Specification = Model.Product_specs;
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 

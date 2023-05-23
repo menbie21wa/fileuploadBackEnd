@@ -14,6 +14,7 @@ const tefRouter  = require('./tef_wof_routes');
 const hasabRouter   = require('./hasab_routes');
 const productRouter   = require('./product_routes');
 const product_specificationRouter   = require('./product_specification');
+const categoryRouter =require('./category_routes');
 
 module.exports = (app) => {
  
@@ -32,4 +33,5 @@ module.exports = (app) => {
   app.use('/addressapi/hasab', hasabRouter);
   app.use('/addressapi/product', productRouter);
   app.use('/addressapi/product_specification', product_specificationRouter);
+  app.use('/addressapi/category', categoryRouter);
 };
