@@ -38,5 +38,24 @@ module.exports = (sequelize, DataTypes) => {
       //onDelete: 'CASCADE'
     })
   };
+
+  // Product.associate = function(models) {
+  //   Product.hasMany(models.Product_specs, {
+  //     foreignKey: 'productId',
+     
+      
+  //   });
+
+  //   Product.belongsTo(models.User, {
+  //     foreignKey: 'userId',
+     
+      
+  //   })
+  //   Product.belongsTo(models.Organization, {
+  //     foreignKey: 'orgId',
+     
+      
+  //   })
+  // };
   return Product_specs;
 };

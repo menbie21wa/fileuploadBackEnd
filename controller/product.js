@@ -3,7 +3,7 @@ var EventEmitter = require("events").EventEmitter;
 const moment = require("moment");
 const fs = require("fs");
 const dotenv = require("dotenv");
-const { product, product_specification } = require('../models')
+const { Product, Product_specification } = require('../models')
 dotenv.config();
 const productDal = require("../dal/product");
 
