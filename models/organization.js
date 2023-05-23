@@ -14,10 +14,11 @@ module.exports = (sequelize, DataTypes) => {
   Organization.init(
     {
       name: DataTypes.STRING,
+      orgCode: DataTypes.INTEGER,
       brand: DataTypes.STRING,
       tinNumber: DataTypes.INTEGER,
       address: DataTypes.STRING,
-      type: DataTypes.STRING,
+      type: DataTypes.ENUM('stock', 'plc', 'partnership'),
       streetNumber: DataTypes.STRING,
       digitalID: DataTypes.STRING,
       businessSector: DataTypes.STRING,

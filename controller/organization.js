@@ -20,9 +20,9 @@ generateRandomNumber = (digit) => {
 };
 
 exports.createOrg = (req, res, next) => {
-  var workflow = new EventEmitter();
-
-  var orgData = req.body;
+  let workflow = new EventEmitter();
+  let orgData = req.body;
+  let loggedin_user = req._user;
 
   workflow.on('validateData', (orgData) => {
     if (!orgData.name || orgData.name === '') {
@@ -37,8 +37,17 @@ exports.createOrg = (req, res, next) => {
     if (!orgData.type || orgData.type === '') {
       return res.status(400).json({ message: 'የድርጂትዎን አይነት ያስገቡ' });
     }
-
-    workflow.emit('checkOrgExist', orgData);
+    if (
+      loggedin_user.role.toLowerCase() === 'admin' ||
+      loggedin_user.role.toLowerCase() === 'supper_admin'
+    ) {
+      orgData['userId'] = loggedin_user.id;
+      workflow.emit('checkOrgExist', orgData);
+    } else {
+      return res.status(401).json({
+        message: 'ድርጅት መመዝገብ ለርስዎ  አልተፈቀደም የድርጅትዎን ማናጀር ያናግሩ',
+      });
+    }
   });
 
   workflow.on('checkOrgExist', (orgData) => {
@@ -76,6 +85,8 @@ exports.createOrg = (req, res, next) => {
   });
 
   workflow.on('createOrg', (orgData) => {
+    let org_code = generateRandomNumber(6);
+    orgData['orgCode'] = org_code;
     OrgDal.create(orgData, (err, org) => {
       if (err) {
         return res.status(500).json({

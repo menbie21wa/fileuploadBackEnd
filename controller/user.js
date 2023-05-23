@@ -513,7 +513,6 @@ exports.userLogin = (req, res, next) => {
     };
 
     UserDal.get(userQuery, (err, user) => {
-      console.log('user', user);
       if (err) {
         res.status(500).json({
           message: 'ሰርቨሩ እየሰራ አይደለም',
@@ -527,6 +526,7 @@ exports.userLogin = (req, res, next) => {
         return;
       }
       bcrypt.compare(userData.password, user.password).then((isMatch) => {
+        console.log('secrete', process.env.API_SECRETE);
         if (isMatch) {
           const payload = {
             id: user.id,
@@ -535,7 +535,7 @@ exports.userLogin = (req, res, next) => {
           };
           jwt.sign(
             payload,
-            'secrete',
+            process.env.API_SECRETE,
             {
               expiresIn: 14400,
             },
