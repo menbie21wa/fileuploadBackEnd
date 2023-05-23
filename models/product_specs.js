@@ -31,12 +31,12 @@ module.exports = (sequelize, DataTypes) => {
       modelName: 'Product_specs',
     }
   );
-  Product_specs.associate = function(models) {
+  Product_specs.associate = function (models) {
     Product_specs.belongsTo(models.Product, {
       foreignKey: 'productId',
-     
+
       //onDelete: 'CASCADE'
-    })
+    });
   };
 
   // Product.associate = function(models) {

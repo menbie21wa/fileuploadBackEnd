@@ -3,11 +3,15 @@ var router = express.Router();
 
 var authenticate = require('../lib/authenticate');
 var authorization = require('../lib/authorization');
-var { upload } = require('../lib/fileUpload');
 
 var organizationController = require('../controller/organization');
 
-router.post('/create', organizationController.createOrg);
+router.post(
+  '/create',
+  authenticate,
+  authorization(['super_admin', 'admin']),
+  organizationController.createOrg
+);
 
 var organizationController = require('../controller/organization');
 
@@ -21,8 +25,8 @@ router.get('/:id', organizationController.fetchOne);
 
 router.put(
   '/:id',
-  // authenticate,
-  // authorization(['super_admin', 'admin', 'user', 'customer']),
+  authenticate,
+  authorization(['super_admin', 'admin']),
 
   organizationController.update
 );

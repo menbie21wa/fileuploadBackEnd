@@ -12,6 +12,10 @@ module.exports = {
       name: {
         type: Sequelize.STRING,
       },
+      orgCode: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+      },
       brand: {
         type: Sequelize.STRING,
       },
@@ -22,7 +26,9 @@ module.exports = {
         type: Sequelize.STRING,
       },
       type: {
-        type: Sequelize.STRING,
+        type: Sequelize.ENUM('stock', 'plc', 'partnership'),
+        defaultValue: 'plc',
+        allowNull: false,
       },
       streetNumber: {
         type: Sequelize.STRING,
@@ -41,6 +47,7 @@ module.exports = {
       },
       userId: {
         type: Sequelize.INTEGER,
+        allowNull: false,
       },
       email: {
         type: Sequelize.STRING,
