@@ -526,7 +526,6 @@ exports.userLogin = (req, res, next) => {
         return;
       }
       bcrypt.compare(userData.password, user.password).then((isMatch) => {
-        console.log('secrete', process.env.API_SECRETE);
         if (isMatch) {
           const payload = {
             id: user.id,

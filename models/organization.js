@@ -39,5 +39,46 @@ module.exports = (sequelize, DataTypes) => {
       modelName: 'Organization',
     }
   );
+  Organization.associate = function (models) {
+    Organization.hasMany(models.Plan, {
+      foreignKey: 'orgId',
+
+      onDelete: 'CASCADE',
+    });
+    Organization.hasOne(models.JobSkill, {
+      foreignKey: 'orgId',
+      onDelete: 'CASCADE',
+    });
+    Organization.hasMany(models.Product, {
+      foreignKey: 'orgId',
+      onDelete: 'CASCADE',
+    });
+    Organization.hasOne(models.Projectoffice, {
+      foreignKey: 'orgId',
+      onDelete: 'CASCADE',
+    });
+    Organization.hasOne(models.Promotion, {
+      foreignKey: 'orgId',
+      onDelete: 'CASCADE',
+    });
+    Organization.hasOne(models.Legality, {
+      foreignKey: 'orgId',
+      onDelete: 'CASCADE',
+    });
+    Organization.hasOne(models.Training, {
+      foreignKey: 'orgId',
+      onDelete: 'CASCADE',
+    });
+    Organization.hasOne(models.Property, {
+      foreignKey: 'orgId',
+      onDelete: 'CASCADE',
+    });
+    Organization.hasMany(models.JobSkill, {
+      foreignKey: 'orgId',
+
+      //onDelete: 'CASCADE'
+    });
+  };
+
   return Organization;
 };
