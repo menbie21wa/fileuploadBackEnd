@@ -27,33 +27,32 @@ exports.createProject = (req, res, next) => {
   var projectData = JSON.parse(JSON.stringify(req.body));
 
   workflow.on('validateData', (projectData) => {
-    workflow.emit('createProject', projectData);
-    //workflow.emit('checkProjectExist', projectData);
+    //workflow.emit('createProject', projectData);
+    workflow.emit('checkProjectExist', projectData);
   });
 
-  // workflow.on('checkProjectExist', (projectData) => {
-  //   let orgQuery = {
-  //     where: {
-  //       orgId: projectData.orgId,
-  //     },
-  //   };
+  workflow.on('checkProjectExist', (projectData) => {
+    let orgQuery = {
+      where: {
+        orgId: projectData.orgId,
+      },
+    };
 
-  //   ProjectDal.get(orgQuery, (err, project) => {
-  //     if (err) {
-  //       return res.status(500).json({
-  //         message: 'ሰርቨሩ እየሰራ አይደለም',
-  //       });
-  //     }
-  //     if (!project || project === null || project === undefined) {
-  //       workflow.emit('createProject', projectData);
-  //     } else {
-  //       return res.status(400).json({
-  //         message: 'መረጃው ካሁን በፊት ተመዝግቧል',
-  //       });
-  //     }
-  //   });
-  // });
-
+    ProjectDal.get(orgQuery, (err, project) => {
+      if (err) {
+        return res.status(500).json({
+          message: 'ሰርቨሩ እየሰራ አይደለም',
+        });
+      }
+      if (!project || project === null || project === undefined) {
+        workflow.emit('createProject', projectData);
+      } else {
+        return res.status(400).json({
+          message: 'መረጃው ካሁን በፊት ተመዝግቧል',
+        });
+      }
+    });
+  });
   workflow.on('createProject', (projectData) => {
     ProjectDal.create(projectData, (err, project) => {
       if (err) {
@@ -64,7 +63,6 @@ exports.createProject = (req, res, next) => {
       workflow.emit('respond', project);
     });
   });
-
   workflow.on('respond', (project) => {
     res.status(200).json(project);
   });

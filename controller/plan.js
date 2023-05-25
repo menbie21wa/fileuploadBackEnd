@@ -29,36 +29,35 @@ exports.createPlan = (req, res, next) => {
       return res.status(400).json({ message: 'እባክዎ ፕላንዎን ያስገቡ' });
     }
 
-    //workflow.emit('checkPlanExist', planData);
-    workflow.emit('createPlan', planData);
+    workflow.emit('checkPlanExist', planData);
+    //workflow.emit('createPlan', planData);
   });
 
-  // workflow.on('checkPlanExist', (planData) => {
-  //   let orgId = planData.orgId;
+  workflow.on('checkPlanExist', (planData) => {
+    let orgId = planData.orgId;
 
-  //   let planQuery = {
-  //     where: {
-  //       orgId: orgId,
-  //     },
-  //   };
+    let planQuery = {
+      where: {
+        orgId: orgId,
+      },
+    };
 
-  //   PlanDal.get(planQuery, (err, plan) => {
-  //     if (err) {
-  //       return res.status(500).json({
-  //         message: 'ሰርቨሩ እየሰራ አይደለም',
-  //       });
-  //     }
-  //     if (!plan || plan === null || plan === undefined) {
-  //       console.log('here', plan);
-  //       workflow.emit('createPlan', planData);
-  //     } else {
-  //       return res.status(400).json({
-  //         message: 'መረጃው ካሁን በፊት ተመዝግቧል',
-  //       });
-  //     }
-  //   });
-  // });
-
+    PlanDal.get(planQuery, (err, plan) => {
+      if (err) {
+        return res.status(500).json({
+          message: 'ሰርቨሩ እየሰራ አይደለም',
+        });
+      }
+      if (!plan) {
+        console.log('here', plan);
+        workflow.emit('createPlan', planData);
+      } else {
+        return res.status(400).json({
+          message: 'መረጃው ካሁን በፊት ተመዝግቧል',
+        });
+      }
+    });
+  });
   workflow.on('createPlan', (planData) => {
     PlanDal.create(planData, (err, plan) => {
       if (err) {

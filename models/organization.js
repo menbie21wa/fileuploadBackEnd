@@ -40,9 +40,8 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
   Organization.associate = function (models) {
-    Organization.hasMany(models.Plan, {
+    Organization.hasOne(models.Plan, {
       foreignKey: 'orgId',
-
       onDelete: 'CASCADE',
     });
     Organization.hasOne(models.JobSkill, {
@@ -73,10 +72,15 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'orgId',
       onDelete: 'CASCADE',
     });
-    Organization.hasMany(models.JobSkill, {
+    Organization.hasOne(models.Tef_Wof, {
       foreignKey: 'orgId',
 
-      //onDelete: 'CASCADE'
+      onDelete: 'CASCADE',
+    });
+    Organization.hasOne(models.Hasab, {
+      foreignKey: 'orgId',
+
+      onDelete: 'CASCADE',
     });
   };
 

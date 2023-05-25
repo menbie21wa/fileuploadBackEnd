@@ -18,12 +18,17 @@ router.get('/:id', trainingController.fetchOne);
 
 router.put(
   '/:id',
-  // authenticate,
-  // authorization(['super_admin', 'admin', 'user', 'customer']),
+  authenticate,
+  authorization(['super_admin', 'admin']),
 
   trainingController.update
 );
-router.delete('/:id', trainingController.remove);
+router.delete(
+  '/:id',
+  authenticate,
+  authorization(['super_admin', 'admin']),
+  trainingController.remove
+);
 
 // Expose User Router
 module.exports = router;

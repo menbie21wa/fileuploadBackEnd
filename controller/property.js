@@ -25,8 +25,8 @@ exports.createProperty = (req, res, next) => {
   var propertyData = req.body;
 
   workflow.on('validateData', (propertyData) => {
-    if (!propertyData.budget || propertyData.budget === '') {
-      return res.status(400).json({ message: 'እባክዎ የድርጂትዎን ስም ያስገቡ' });
+    if (!propertyData.orgId || propertyData.orgId === '') {
+      return res.status(400).json({ message: 'የድርጅትዎን መለያ ያስገቡ' });
     }
 
     workflow.emit('checkPropertyExist', propertyData);
@@ -45,7 +45,7 @@ exports.createProperty = (req, res, next) => {
           message: 'ሰርቨሩ እየሰራ አይደለም',
         });
       }
-      if (!property || property === null || property === undefined) {
+      if (!property) {
         workflow.emit('createProperty', propertyData);
       } else {
         return res.status(400).json({
@@ -57,7 +57,7 @@ exports.createProperty = (req, res, next) => {
 
   workflow.on('createProperty', (propertyData) => {
     PropertyDal.create(propertyData, (err, property) => {
-      console.log("property")
+      console.log('property');
       if (err) {
         return res.status(500).json({
           message: 'ሰርቨሩ እየሰራ አይደለም',
@@ -86,13 +86,12 @@ exports.fetchOne = (req, res, next) => {
           message: 'ሰርቨሩ እየሰራ አይደለም',
         });
       }
-      if (peroperty || peroperty !== undefined) {
-        workflow.emit('respond', peroperty);
-      } else {
+      if (!peroperty) {
         return res.status(400).json({
           message: 'በዚህ መለያ የተመዘገበ ማተሪኣል የለም',
         });
       }
+      workflow.emit('respond', peroperty);
     });
   });
 

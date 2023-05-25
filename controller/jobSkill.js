@@ -28,7 +28,9 @@ exports.createJobSkill = (req, res, next) => {
     if (!jobSkillData.skill || jobSkillData.skill === '') {
       return res.status(400).json({ message: 'እባክዎ ስኪልዎን ያስገቡ' });
     }
-
+    if (!jobSkillData.orgId || jobSkillData.orgId === '') {
+      return res.status(400).json({ message: 'የድርጅትዎን መለያ ያስገቡ' });
+    }
     //workflow.emit('createJobSkills', jobSkillData);
 
     workflow.emit('checkJobSkillExist', jobSkillData);

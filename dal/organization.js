@@ -2,6 +2,16 @@ const Model = require('../models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const Organization = Model.Organization;
+const Legality = Model.Legality;
+const Property = Model.Property;
+const Training = Model.Training;
+const JobSkill = Model.JobSkill;
+const Plan = Model.Plan;
+const Promotion = Model.Promotion;
+const Product = Model.Product;
+const Projectoffice = Model.Projectoffice;
+const Hasab = Model.Hasab;
+const Tef_wof = Model.Tef_Wof;
 
 exports.create = async (organizationData, cb) => {
   try {
@@ -24,7 +34,20 @@ exports.update = async (updates, query, cb) => {
 
 exports.getByPk = async (query, cb) => {
   try {
-    const org = await Organization.findByPk(query);
+    const org = await Organization.findByPk(query, {
+      include: [
+        { model: Legality },
+        { model: Product },
+        { model: Plan },
+        { model: Property },
+        { model: Training },
+        { model: Hasab },
+        { model: Projectoffice },
+        { model: Promotion },
+        { model: JobSkill },
+        { model: Tef_wof },
+      ],
+    });
 
     return cb(null, org?.dataValues);
   } catch (err) {
@@ -55,6 +78,7 @@ exports.delete = async (query, cb) => {
 };
 
 exports.getCollection = async (query, cb) => {
+  console.log('orgQuery', query);
   try {
     let orgs = await Organization.findAll(query);
     return cb(null, orgs);

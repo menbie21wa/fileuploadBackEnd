@@ -9,7 +9,11 @@ var promotionController = require('../controller/promotion');
 
 router.post('/create', promotionController.createPromotion);
 
-router.get('/all', promotionController.fetchAll);
+router.get(
+  '/all',
+
+  promotionController.fetchAll
+);
 
 router.get('/paginate', promotionController.fetchAllByPagination);
 
@@ -19,12 +23,17 @@ router.get('/:id', promotionController.fetchOne);
 
 router.put(
   '/:id',
-  // authenticate,
-  // authorization(['super_admin', 'admin', 'user', 'customer']),
+  authenticate,
+  authorization(['super_admin', 'admin']),
 
   promotionController.update
 );
-router.delete('/:id', promotionController.remove);
+router.delete(
+  '/:id',
+  authenticate,
+  authorization(['super_admin', 'admin']),
+  promotionController.remove
+);
 
 // Expose User Router
 module.exports = router;

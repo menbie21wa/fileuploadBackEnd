@@ -1,6 +1,6 @@
 var EventEmitter = require('events').EventEmitter;
 const bcrypt = require('bcrypt');
-const moment = require('moment');
+const moment = require('moment')
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const dotenv = require('dotenv');
@@ -8,12 +8,7 @@ dotenv.config();
 const { User, tef_wof } = require('../models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-
-// const jwt = require("jsonwebtoken");
 const UserDal = require('../dal/user');
-// const EmailDal = require("../dal/email");
-// const OtpDal = require("../dal/otp");
-// const Forgot_password_email = require("../lib/forgot_password_email");
 
 hashUserPassword = (password) => {
   bcrypt.hash(password, 10, (err, hash) => {
@@ -47,78 +42,36 @@ generateRandomNumber = (digit) => {
   return String(generatedNumber).substring(0, digit);
 };
 
-//create start
 exports.createUser = (req, res, next) => {
-  console.log('Creating User');
-
   var workflow = new EventEmitter();
 
   var userData = req.body;
 
-  // count of all fields in object
-  // const fieldCount = Object.keys(yourJSON).length;
-
-  // // count of filled fields
-  // const fieldFilledCount = Object.keys(yourJSON.filter(field => field !== null)).length;
-
-  // // percent of completion
-  // const percent = (fieldFilledCount / fieldCount) * 100;
-
   workflow.on('validateUserData', (userData) => {
-    if (!userData.firstName || userData.firstName === '') {
-      res.status(400).json({
+    if (!userData.firstName) {
+      return res.status(400).json({
         message: 'ስም ማስገባት አለብዎት',
       });
-      return;
     }
-    if (!userData.middleName || userData.middleName === '') {
-      res.status(400).json({
+    if (!userData.middleName) {
+      return res.status(400).json({
         message: 'ያባት ስም ማስገባት አለብዎት',
       });
-      return;
     }
-    if (!userData.lastName || userData.lastName === '') {
-      res.status(400).json({
-        message: 'ያያት ስም ማስገባት አለብዎት',
-      });
-      return;
-    }
-
     if (!userData.email || userData.email === '') {
-      res.status(400).json({
-        message: 'ኢሜል  ማስገባት አለብዎት',
+      return res.status(400).json({
+        message: 'ኢሜል ማስገባት አለብዎት',
       });
-      return;
     }
-
-    //   if (!userData.phoneNumber || userData?.phoneNumber === "") {
-    //     res.status(400)
-    //     .json({message:"ስልክ ማስገባት አለብወት"});
-    //   } else {
-    //     if (String(userData["phoneNumber"])[0] === "0")
-    //       userData["phoneNumber"] =
-    //         "+251" + String(userData["phoneNumber"]).substring(1);
-    //     else if (String(userData["phoneNumber"])[0] === "9")
-    //       userData["phoneNumber"] = "+251" + String(userData["phoneNumber"]);
-    //     else if (String(userData["phoneNumber"])[0] === "2")
-    //       userData["phoneNumber"] = "+" + String(userData["phoneNumber"]);
-    //     else {
-    //       res.status(400)
-    //       .json({message:"የተሳሳተ ስልክ ቁጥር አስገብተዋል"})
-    //     }
-    //   }
-
     if (!userData.password || userData.password === '') {
-      res.status(400).json({
+      return res.status(400).json({
         message: 'የይለፍ ቃል ማስገባት አለብወት',
       });
-      return;
     }
     if (!userData.sex && userData.sex === '') {
-      res.status(400).json({
-        message: 'የይለፍ ቃል',
+      return res.status(400).json({
+        message: 'ጾታ ማስገባት አለብዎት',
       });
-      return;
     }
 
     workflow.emit('checkUserExist', userData);
@@ -132,18 +85,16 @@ exports.createUser = (req, res, next) => {
     };
     UserDal.get(userQuery, (err, user) => {
       if (err) {
-        res.status(500).json({
+        return res.status(500).json({
           message: 'ሰርቨሩ እየሰራ አይደለም',
         });
-        return;
       }
-      if (!user || user === null) {
+      if (!user) {
         workflow.emit('hashPassword', userData);
       } else {
-        res.status(400).json({
+        return res.status(400).json({
           message: 'ካሁን በፊት ተመዝግበዋል',
         });
-        return;
       }
     });
   });
@@ -151,10 +102,9 @@ exports.createUser = (req, res, next) => {
   workflow.on('hashPassword', (userData) => {
     bcrypt.hash(userData.password, 10, (err, hash) => {
       if (err) {
-        res.status(500).json({
+        return res.status(500).json({
           message: 'ሰርቨሩ እየሰራ አይደለም',
         });
-        return;
       }
       userData.password = hash;
       workflow.emit('createUser', userData);
@@ -168,12 +118,10 @@ exports.createUser = (req, res, next) => {
 
     UserDal.create(userData, (err, user) => {
       if (err) {
-        res.status(500).json({
+        return res.status(500).json({
           message: 'ሰርቨሩ እየሰራ አይደለም',
         });
-        return;
       }
-
       workflow.emit('respond', user);
     });
   });
@@ -184,7 +132,6 @@ exports.createUser = (req, res, next) => {
       user: user,
       message: 'በትክክል ተመዝግበዋል',
     });
-    return;
   });
   workflow.emit('validateUserData', userData);
 };
@@ -236,7 +183,6 @@ exports.fetchAll = (req, res, next) => {
   workflow.emit('fetchAllUsers');
 };
 
-//fetchbyId start
 exports.fetchOne = (req, res, next) => {
   let workflow = new EventEmitter();
   let { id } = req.params;
@@ -267,9 +213,7 @@ exports.fetchOne = (req, res, next) => {
 
   workflow.emit('fetchUser');
 };
-//fetchbyId  end
 
-//deletebyId start
 exports.remove = (req, res, next) => {
   console.log('Archiving user:' + req.params.id);
 
@@ -324,9 +268,7 @@ exports.remove = (req, res, next) => {
 
   workflow.emit('findUser');
 };
-//deletebyId end
 
-//update start
 exports.update = (req, res, next) => {
   console.log('Update User');
 
@@ -443,8 +385,7 @@ exports.update = (req, res, next) => {
   }
   workflow.emit('fetchUser', updatePayload);
 };
-//update end
-//searchUser start
+
 exports.search = (req, res, next) => {
   let workflow = new EventEmitter();
 
@@ -489,16 +430,13 @@ exports.search = (req, res, next) => {
 
   workflow.emit('prepareSearchQuery');
 };
-//searchUser end
 
-//userLogin start
 exports.userLogin = (req, res, next) => {
   console.log('User login');
 
   var workflow = new EventEmitter();
 
   var userData = req.body;
-  // var userData = JSON.parse(JSON.stringify(req.body));
 
   workflow.on('validateData', (userData) => {
     if (!userData.email || !userData.password) {
@@ -567,4 +505,3 @@ exports.userLogin = (req, res, next) => {
 
   workflow.emit('validateData', userData);
 };
-//userLogin end

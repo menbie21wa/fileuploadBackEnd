@@ -28,36 +28,30 @@ exports.createPromotion = (req, res, next) => {
     if (!promotionData.orgId || promotionData.orgId === '') {
       return res.status(400).json({ message: 'እባክዎ የድርጅትዎን መለያ ያስገቡ' });
     }
-
-    workflow.emit('createPromotion', promotionData);
-    // workflow.emit('checkPromotionExist', promotionData);
+    //workflow.emit('createPromotion', promotionData);
+    workflow.emit('checkPromotionExist', promotionData);
   });
-
-  // workflow.on('checkPromotionExist', (promotionData) => {
-  //   let orgId = promotionData.orgId;
-
-  //   let promotionQuery = {
-  //     where: {
-  //       orgId: tinNumber,
-  //     },
-  //   };
-
-  //   PromotionDal.get(promotionQuery, (err, promotion) => {
-  //     if (err) {
-  //       return res.status(500).json({
-  //         message: 'ሰርቨሩ እየሰራ አይደለም',
-  //       });
-  //     }
-  //     if (!promotion || promotion === null || promotion === undefined) {
-  //       workflow.emit('createPromotion', promotionData);
-  //     } else {
-  //       return res.status(400).json({
-  //         message: 'መረጃው ካሁን በፊት ተመዝግቧል',
-  //       });
-  //     }
-  //   });
-  // });
-
+  workflow.on('checkPromotionExist', (promotionData) => {
+    let promotionQuery = {
+      where: {
+        orgId: promotionData.orgId,
+      },
+    };
+    PromotionDal.get(promotionQuery, (err, promotion) => {
+      if (err) {
+        return res.status(500).json({
+          message: 'ሰርቨሩ እየሰራ አይደለም',
+        });
+      }
+      if (!promotion || promotion === null || promotion === undefined) {
+        workflow.emit('createPromotion', promotionData);
+      } else {
+        return res.status(400).json({
+          message: 'መረጃው ካሁን በፊት ተመዝግቧል',
+        });
+      }
+    });
+  });
   workflow.on('createPromotion', (promotionData) => {
     PromotionDal.create(promotionData, (err, promotion) => {
       if (err) {

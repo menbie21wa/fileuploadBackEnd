@@ -1,7 +1,7 @@
 var EventEmitter = require('events').EventEmitter;
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
-
+let UserDal = require('../dal/user');
 var OrgDal = require('../dal/organization');
 
 generateRandomNumber = (digit) => {
@@ -22,41 +22,34 @@ generateRandomNumber = (digit) => {
 exports.createOrg = (req, res, next) => {
   let workflow = new EventEmitter();
   let orgData = req.body;
-  let loggedin_user = req._user;
 
   workflow.on('validateData', (orgData) => {
-    if (!orgData.name || orgData.name === '') {
+    if (!orgData.name) {
       return res.status(400).json({ message: 'እባክዎ የድርጂትዎን ስም ያስገቡ' });
     }
 
-    if (!orgData.tinNumber || orgData.tinNumber === '') {
+    if (!orgData.tinNumber) {
       return res
         .status(400)
-        .json({ message: ' እባክዎት ድርጂት የግብር መለያ ቁትር ያስገቡ ያስገቡ' });
+        .json({ message: ' እባክዎት ድርጂት የግብር መለያ ቁጥር ያስገቡ ያስገቡ' });
     }
-    if (!orgData.type || orgData.type === '') {
+    if (!orgData.type) {
       return res.status(400).json({ message: 'የድርጂትዎን አይነት ያስገቡ' });
     }
-    if (
-      loggedin_user.role.toLowerCase() === 'admin' ||
-      loggedin_user.role.toLowerCase() === 'supper_admin'
-    ) {
-      orgData['userId'] = loggedin_user.id;
-      workflow.emit('checkOrgExist', orgData);
-    } else {
-      return res.status(401).json({
-        message: 'ድርጅት መመዝገብ ለርስዎ  አልተፈቀደም የድርጅትዎን ማናጀር ያናግሩ',
+    if (!orgData.userId) {
+      return res.status(400).json({
+        message: 'እባክዎ የአድሚን ዩዘር መለያ ያስገቡ',
       });
     }
+    workflow.emit('checkOrgExist', orgData);
   });
-
   workflow.on('checkOrgExist', (orgData) => {
     let orgQuery = {
       where: {
         [Op.and]: [
           {
-            name: {
-              [Op.eq]: orgData.name.toLowerCase(),
+            userId: {
+              [Op.eq]: orgData.userId,
             },
           },
           {
@@ -67,7 +60,6 @@ exports.createOrg = (req, res, next) => {
         ],
       },
     };
-
     OrgDal.get(orgQuery, (err, org) => {
       if (err) {
         return res.status(500).json({
@@ -83,7 +75,6 @@ exports.createOrg = (req, res, next) => {
       }
     });
   });
-
   workflow.on('createOrg', (orgData) => {
     let org_code = generateRandomNumber(6);
     orgData['orgCode'] = org_code;
@@ -93,15 +84,66 @@ exports.createOrg = (req, res, next) => {
           message: 'ሰርቨሩ እየሰራ አይደለም',
         });
       }
+      workflow.emit('updateUserRole', org);
+    });
+  });
+  workflow.on('updateUserRole', (org) => {
+    let updateQuery = {
+      where: { id: org.userId },
+    };
+    let updatePayload = {
+      role: 'super_admin',
+    };
+
+    UserDal.update(updatePayload, updateQuery, (err, user) => {
+      if (err) {
+        res.status(500).json({
+          message: 'ሰርቨሩ እየሰራ አይደለም',
+        });
+        return;
+      }
       workflow.emit('respond', org);
     });
   });
-
   workflow.on('respond', (org) => {
     res.status(200).json(org);
   });
 
   workflow.emit('validateData', orgData);
+};
+
+exports.fetchStocks = (req, res, next) => {
+  let workflow = new EventEmitter();
+
+  let _user = req._user;
+
+  workflow.on('fetchOrg', () => {
+    let orgQuery = {
+      where: {
+        userId: _user.id,
+      },
+    };
+
+    OrgDal.getCollection(orgQuery, (err, orgs) => {
+      if (err) {
+        return res.status(500).json({
+          message: 'ሰርቨሩ እየሰራ አይደለም',
+        });
+      }
+      if (!org.length > 0) {
+        return res.status(400).json({
+          message: 'በዚህ መለያ የተመዘገበ ድርጂት የለም',
+        });
+      }
+      workflow.emit('respond', orgs);
+    });
+  });
+
+  workflow.on('respond', (orgs) => {
+    res.status(200).json(orgs);
+  });
+
+  workflow.emit('fetchOrg');
 };
 
 exports.fetchOne = (req, res, next) => {
