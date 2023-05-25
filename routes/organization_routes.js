@@ -6,14 +6,7 @@ var authorization = require('../lib/authorization');
 
 var organizationController = require('../controller/organization');
 
-router.post(
-  '/create',
-  authenticate,
-  authorization(['super_admin', 'admin']),
-  organizationController.createOrg
-);
-
-var organizationController = require('../controller/organization');
+router.post('/create', organizationController.createOrg);
 
 router.get('/all', organizationController.fetchAll);
 
@@ -21,7 +14,19 @@ router.get('/paginate', organizationController.fetchAllByPagination);
 
 router.get('/search', organizationController.search);
 
-router.get('/:id', organizationController.fetchOne);
+router.get(
+  '/stock',
+  authenticate,
+  authorization(['super_admin', 'admin']),
+  organizationController.fetchStocks
+);
+
+router.get(
+  '/:id',
+  authenticate,
+  authorization(['super_admin', 'admin']),
+  organizationController.fetchOne
+);
 
 router.put(
   '/:id',
@@ -30,7 +35,12 @@ router.put(
 
   organizationController.update
 );
-router.delete('/:id', organizationController.remove);
+router.delete(
+  '/:id',
+  authenticate,
+  authorization(['super_admin', 'admin']),
+  organizationController.remove
+);
 
 // Expose User Router
 module.exports = router;

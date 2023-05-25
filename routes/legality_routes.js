@@ -65,19 +65,16 @@ router.get('/:id', legalityController.fetchOne);
 
 router.put(
   '/:id',
-  // authenticate,
-  // authorization(['super_admin', 'admin', 'user', 'customer']),
-  upload.fields([
-    {
-      name: 'logo',
-    },
-    {
-      name: 'file',
-    },
-  ]),
+  authenticate,
+  authorization(['super_admin', 'admin']),
   legalityController.update
 );
-router.delete('/:id', legalityController.remove);
+router.delete(
+  '/:id',
+  authenticate,
+  authorization(['super_admin', 'admin']),
+  legalityController.remove
+);
 
 // Expose User Router
 module.exports = router;

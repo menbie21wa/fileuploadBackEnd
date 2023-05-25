@@ -3,7 +3,6 @@ var router = express.Router();
 
 var authenticate = require('../lib/authenticate');
 var authorization = require('../lib/authorization');
-var { upload } = require('../lib/fileUpload');
 
 var jobSkillController = require('../controller/jobSkill');
 
@@ -19,11 +18,16 @@ router.get('/:id', jobSkillController.fetchOne);
 
 router.put(
   '/:id',
-  // authenticate,
-  // authorization(['super_admin', 'admin', 'user', 'customer']),
+  authenticate,
+  authorization(['super_admin', 'admin']),
   jobSkillController.update
 );
-router.delete('/:id', jobSkillController.remove);
+router.delete(
+  '/:id',
+  authenticate,
+  authorization(['super_admin', 'admin']),
+  jobSkillController.remove
+);
 
 // Expose User Router
 module.exports = router;

@@ -18,12 +18,17 @@ router.get('/:id', propertyController.fetchOne);
 
 router.put(
   '/:id',
-  // authenticate,
-  // authorization(['super_admin', 'admin', 'user', 'customer']),
+  authenticate,
+  authorization(['super_admin', 'admin']),
 
   propertyController.update
 );
-router.delete('/:id', propertyController.remove);
+router.delete(
+  '/:id',
+  authenticate,
+  authorization(['super_admin', 'admin']),
+  propertyController.remove
+);
 
 // Expose User Router
 module.exports = router;

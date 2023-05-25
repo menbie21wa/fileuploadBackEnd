@@ -73,35 +73,35 @@ exports.createLegality = (req, res, next) => {
       legalityData.acceptedProject = fileData.acceptedProject[0].originalname;
     }
     legalityData['orgId'] = legalityData.orgId;
-    console.log('legalityData', legalityData);
-    workflow.emit('create', legalityData);
-    //workflow.emit('checkProjectExist', projectData);
+
+    //workflow.emit('create', legalityData);
+    workflow.emit('checkLegalityExist', legalityData);
   });
 
-  // workflow.on('checkProjectExist', (projectData) => {
-  //   let orgQuery = {
-  //     where: {
-  //       orgId: projectData.orgId,
-  //     },
-  //   };
+  workflow.on('checkLegalityExist', (legalityData) => {
+    let orgQuery = {
+      where: {
+        orgId: legalityData.orgId,
+      },
+    };
 
-  //   ProjectDal.get(orgQuery, (err, project) => {
-  //     if (err) {
-  //       return res.status(500).json({
-  //         message: 'ሰርቨሩ እየሰራ አይደለም',
-  //       });
-  //     }
-  //     if (!project || project === null || project === undefined) {
-  //       workflow.emit('createProject', projectData);
-  //     } else {
-  //       return res.status(400).json({
-  //         message: 'መረጃው ካሁን በፊት ተመዝግቧል',
-  //       });
-  //     }
-  //   });
-  // });
+    LegalityDal.get(orgQuery, (err, legality) => {
+      if (err) {
+        return res.status(500).json({
+          message: 'ሰርቨሩ እየሰራ አይደለም',
+        });
+      }
+      if (!legality) {
+        workflow.emit('createLegality', legalityData);
+      } else {
+        return res.status(400).json({
+          message: 'መረጃው ካሁን በፊት ተመዝግቧል',
+        });
+      }
+    });
+  });
 
-  workflow.on('create', (legalityData) => {
+  workflow.on('createLegality', (legalityData) => {
     LegalityDal.create(legalityData, (err, legality) => {
       if (err) {
         return res.status(500).json({

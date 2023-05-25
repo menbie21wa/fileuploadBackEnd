@@ -10,18 +10,6 @@ var hasabController = require("../controller/hasab");
 
 router.post(
   "/create",
-  //upload.any(
-  //   [
-  //   {
-  //     name: "profilePic",
-  //     maxCount: 2
-  //   },
-  //   {
-  //     name: "file",
-  //     maxCount: 2
-  //   }
-  // ]
-  //),
 
   hasabController.createHasab
 );

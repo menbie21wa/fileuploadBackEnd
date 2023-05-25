@@ -46,7 +46,7 @@ exports.createTraining = (req, res, next) => {
           message: 'ሰርቨሩ እየሰራ አይደለም',
         });
       }
-      if (!training || training === null || training === undefined) {
+      if (!training) {
         workflow.emit('createTraining', trainingData);
       } else {
         return res.status(400).json({
