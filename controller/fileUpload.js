@@ -86,6 +86,19 @@ exports.uploadImage = (req, res, next) => {
         fileData.logo = fileData.logo[0].filename;
       }
       if (fileData && fileData.avatar && fileData.avatar[0].fieldname !== '') {
+        // let ext_indx = fileData.avatar[0].filename.lastIndexOf('.');
+        // ext_indx < 0 ? '' : fileData.avatar[0].filename.substr(ext_indx);
+        // console.log('fileData', fileData.avatar[0].filename);
+
+        // if (
+        //   extension !== '.png' ||
+        //   extension !== '.jpg' ||
+        //   extension !== '.jpeg' ||
+        //   extension !== '.gif' ||
+        //   extension !== '.svg'
+        // ) {
+        //   return res.status(400).json({ message: 'ያልተፈቀደ የፋይል ፎርማት አስገብተዋል' });
+        // }
         fileData.avatar = fileData.avatar[0].filename;
       }
       if (
@@ -123,11 +136,7 @@ exports.uploadImage = (req, res, next) => {
       ) {
         fileData.contractForm = fileData.contractForm[0].filename;
       }
-      if (
-        fileData &&
-        fileData.images &&
-        fileData.images[0].fieldname !== ''
-      ) {
+      if (fileData && fileData.images && fileData.images[0].fieldname !== '') {
         fileData.images = fileData.images[0].filename;
       }
       if (
@@ -137,7 +146,7 @@ exports.uploadImage = (req, res, next) => {
       ) {
         fileData.workExperience = fileData.workExperience[0].filename;
       }
-      
+
       workflow.emit('respond', fileData);
     }
   });

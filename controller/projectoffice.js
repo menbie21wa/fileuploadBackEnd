@@ -231,9 +231,7 @@ exports.fetchAll = (req, res, next) => {
       if (projects && projects.length > 0) {
         workflow.emit('respond', projects);
       } else {
-        return res.status(400).json({
-          message: 'በዚህ መለያ የተመዘገበ ፕሮጀችት የለም',
-        });
+        return res.status(400).json([]);
       }
     });
   });

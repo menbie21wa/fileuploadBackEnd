@@ -25,14 +25,6 @@ router.put(
   '/:id',
   authenticate,
   authorization(['super_admin', 'admin', 'user', 'customer']),
-  // upload.fields([
-  //   {
-  //     name: "profilePic",
-  //   },
-  //   {
-  //     name: "file",
-  //   },
-  // ]),
   userController.update
 );
 

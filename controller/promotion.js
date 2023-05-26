@@ -231,9 +231,7 @@ exports.fetchAll = (req, res, next) => {
       if (promotions && promotions.length > 0) {
         workflow.emit('respond', promotions);
       } else {
-        return res.status(400).json({
-          message: 'በዚህ መለያ የተመዘገበ ፕሮሞሽን  የለም',
-        });
+        return res.status(400).json([]);
       }
     });
   });

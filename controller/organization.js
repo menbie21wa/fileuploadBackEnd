@@ -22,6 +22,7 @@ generateRandomNumber = (digit) => {
 exports.createOrg = (req, res, next) => {
   let workflow = new EventEmitter();
   let orgData = req.body;
+  let _user = req._user;
 
   workflow.on('validateData', (orgData) => {
     if (!orgData.name) {
@@ -36,11 +37,7 @@ exports.createOrg = (req, res, next) => {
     if (!orgData.type) {
       return res.status(400).json({ message: 'የድርጂትዎን አይነት ያስገቡ' });
     }
-    if (!orgData.userId) {
-      return res.status(400).json({
-        message: 'እባክዎ የአድሚን ዩዘር መለያ ያስገቡ',
-      });
-    }
+
     workflow.emit('checkOrgExist', orgData);
   });
   workflow.on('checkOrgExist', (orgData) => {
@@ -49,7 +46,7 @@ exports.createOrg = (req, res, next) => {
         [Op.and]: [
           {
             userId: {
-              [Op.eq]: orgData.userId,
+              [Op.eq]: _user.id,
             },
           },
           {
@@ -76,8 +73,9 @@ exports.createOrg = (req, res, next) => {
     });
   });
   workflow.on('createOrg', (orgData) => {
-    let org_code = generateRandomNumber(6);
-    orgData['orgCode'] = org_code;
+    let org_code = generateRandomNumber(7);
+    orgData['digitalID'] = org_code;
+    orgData['userId'] = _user.id;
     OrgDal.create(orgData, (err, org) => {
       if (err) {
         return res.status(500).json({
@@ -307,15 +305,12 @@ exports.fetchAll = (req, res, next) => {
       if (orgs && orgs.length > 0) {
         workflow.emit('respond', orgs);
       } else {
-        return res.status(400).json({
-          message: 'በዚህ መለያ የተመዘገበ ድርጅት የለም',
-        });
+        return res.status(400).json([]);
       }
     });
   });
 
   workflow.on('respond', (org) => {
-    // delete user.password;
     res.status(200).json(org);
   });
 

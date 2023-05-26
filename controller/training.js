@@ -232,9 +232,7 @@ exports.fetchAll = (req, res, next) => {
       if (trainings && trainings.length > 0) {
         workflow.emit('respond', trainings);
       } else {
-        return res.status(400).json({
-          message: 'በዚህ መለያ የተመዘገበ ድርጅት የለም',
-        });
+        return res.status(400).json([]);
       }
     });
   });

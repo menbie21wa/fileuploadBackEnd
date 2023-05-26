@@ -1,11 +1,10 @@
 var EventEmitter = require('events').EventEmitter;
 const bcrypt = require('bcrypt');
-const moment = require('moment')
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
+const path = require('path');
 const dotenv = require('dotenv');
 dotenv.config();
-const { User, tef_wof } = require('../models');
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const UserDal = require('../dal/user');
@@ -73,10 +72,8 @@ exports.createUser = (req, res, next) => {
         message: 'ጾታ ማስገባት አለብዎት',
       });
     }
-
     workflow.emit('checkUserExist', userData);
   });
-
   workflow.on('checkUserExist', (userData) => {
     let userQuery = {
       where: {
@@ -98,7 +95,6 @@ exports.createUser = (req, res, next) => {
       }
     });
   });
-
   workflow.on('hashPassword', (userData) => {
     bcrypt.hash(userData.password, 10, (err, hash) => {
       if (err) {
@@ -110,10 +106,8 @@ exports.createUser = (req, res, next) => {
       workflow.emit('createUser', userData);
     });
   });
-
   workflow.on('createUser', (userData) => {
     let user_code = generateRandomNumber(6);
-
     userData['userCode'] = user_code;
 
     UserDal.create(userData, (err, user) => {
@@ -125,7 +119,6 @@ exports.createUser = (req, res, next) => {
       workflow.emit('respond', user);
     });
   });
-
   workflow.on('respond', (user) => {
     if (user?.password) delete user?.password;
     res.status(201).json({
@@ -270,119 +263,109 @@ exports.remove = (req, res, next) => {
 };
 
 exports.update = (req, res, next) => {
-  console.log('Update User');
-
   let workflow = new EventEmitter();
   let { id } = req?.params;
   let _user = req?._user;
-  let path = [];
-  console.log('user', _user);
+  let image_path = '';
 
   workflow.on('fetchUser', (updatePayload) => {
     UserDal.getByPk(id, (err, user) => {
       if (err) {
-        res.status(500).json({
+        return res.status(500).json({
           message: 'ሰርቨሩ እየሰራ አይደለም',
         });
-        return;
       }
       if (!user) {
-        res.status(400).json({
+        return res.status(400).json({
           message: 'ባስገቡት መረጃ የተመዘገበ ሰው የለም',
         });
-        return;
       }
-      // else {
-      //   if (imagePayload?.profilePic && imagePayload?.profilePic !== "") {
-      //     updatePayload.profilePic = imagePayload?.profilePic[0]?.filename;
-      //     if (user?.profilePic) {
-      //       path.push(`./images/${user?.profilePic}`);
-      //     }
-      //   }
-      //   if (imagePayload?.file && imagePayload?.file !== "") {
-      //     updatePayload.file = imagePayload?.file[0]?.filename;
-      //     if (user?.file) {
-      //       path.push(`./images/${user?.file}`);
-      //     }
-      //   }
-      // }
-
       if (Number(_user?.id) === Number(id)) {
-        workflow.emit('updateUser', user, updatePayload, path);
+        workflow.emit('updateUser', user, updatePayload);
       } else {
-        res.status(401).json({
+        return res.status(401).json({
           message: 'ለርስዎ ያልተፈቀደ',
         });
-        return;
       }
     });
   });
+  workflow.on('updateUser', (user, updatePayload) => {
+    if (updatePayload.avatar && user.avatar) {
+      fs.readdir(`./images`, (error, fileNames) => {
+        if (error) throw error;
+        if (fileNames.includes(user.avatar)) {
+          image_path = `./images/${user.avatar}`;
+        }
+        return;
+      });
+    }
 
-  workflow.on('updateUser', (user, updatePayload, path) => {
     let updateQuery = {
       where: { id: user.id },
     };
 
     UserDal.update(updatePayload, updateQuery, (err, updated_user) => {
       if (err) {
-        res.status(500).json({
+        return res.status(500).json({
           message: 'ሰርቨሩ እየሰራ አይደለም',
         });
-        return;
       }
-      if (path?.length > 0) {
-        path.map((_path) => {
-          fs.unlink(_path, (err) => {
-            if (err) {
-              console.error(err);
-              return;
-            }
-          });
+      if (image_path) {
+        fs.unlink(image_path, (err) => {
+          if (err) {
+            console.error(err);
+            return;
+          }
         });
       }
-      if (updated_user.length > 0 || updated_user !== undefined) {
+
+      if (updated_user.length > 0) {
         workflow.emit('getUpdatedData', user);
       } else {
-        res.status(400).json({
+        return res.status(400).json({
           message: 'አልተሳካም እንደገና ይሞክሩ',
         });
-        return;
       }
     });
   });
-
   workflow.on('getUpdatedData', (updated_user) => {
     UserDal.getByPk(id, (err, userUpdated) => {
       if (err) {
-        res.status(400).json({
+        return res.status(400).json({
           message: 'ሰርቨሩ እየሰራ አይደለም',
         });
-        return;
       }
-
       workflow.emit('respond', userUpdated);
     });
   });
-
   workflow.on('respond', (userUpdated) => {
     if (userUpdated && userUpdated.password) delete userUpdated.password;
     res.status(200).json({
       userUpdated,
       message: 'ያስገቡት መረጃ በትክክል ተቀይሮል',
     });
-    return;
   });
 
-  let updatePayload = JSON.parse(JSON.stringify(req.body));
-  // let imagePayload = req.files;
-  console.log('data', updatePayload);
+  let updatePayload = req.body;
 
-  if (Object.keys(updatePayload).length === 0) {
-    res.status(400).json({
+  if (!updatePayload) {
+    return res.status(400).json({
       message: 'ምንም መረጃ አላስገቡም',
     });
-    return;
   }
+  if (updatePayload.userCode) {
+    return res.status(400).json({ message: 'አፕዴት የማይደረግ ዳታ ልከዋል' });
+  } else if (updatePayload.password) {
+    return res.status(400).json({ message: 'አፕዴት የማይደረግ ዳታ ልከዋል' });
+  } else if (updatePayload.role) {
+    return res.status(400).json({ message: 'አፕዴት የማይደረግ ዳታ ልከዋል' });
+  }
+  // let extension = '';
+  // var ext_indx = updatePayload.avatar.lastIndexOf('.');
+  // if (ext_indx > 0) {
+  //   extension = updatePayload.avatar.substr(ext_indx);
+  // }
+
   workflow.emit('fetchUser', updatePayload);
 };
 
@@ -474,7 +457,7 @@ exports.userLogin = (req, res, next) => {
             payload,
             process.env.API_SECRETE,
             {
-              expiresIn: 14400,
+              expiresIn: 10800,
             },
             (err, token) => {
               if (err) {
@@ -482,7 +465,6 @@ exports.userLogin = (req, res, next) => {
               }
 
               user['token'] = token;
-              console.log('user', user.token);
 
               workflow.emit('respond', token, user);
             }

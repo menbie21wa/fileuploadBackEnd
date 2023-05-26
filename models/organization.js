@@ -1,5 +1,5 @@
 'use strict';
-const { Model } = require('sequelize');
+const { Model, STRING } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Organization extends Model {
     /**
@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       brand: DataTypes.STRING,
       tinNumber: DataTypes.INTEGER,
       address: DataTypes.STRING,
-      type: DataTypes.ENUM('stock', 'plc', 'partnership'),
+      type: DataTypes.ENUM('sc', 'plc', 'partners'),
       streetNumber: DataTypes.STRING,
       digitalID: DataTypes.STRING,
       businessSector: DataTypes.STRING,
@@ -27,12 +27,20 @@ module.exports = (sequelize, DataTypes) => {
       userId: DataTypes.INTEGER,
       email: DataTypes.STRING,
       logo: DataTypes.STRING,
-      establishment: DataTypes.STRING,
+      establishment: DataTypes.TEXT,
       capital: DataTypes.DECIMAL,
       employees: DataTypes.INTEGER,
       currentCapital: DataTypes.DECIMAL,
       stockFounder: DataTypes.INTEGER,
       currentStock: DataTypes.INTEGER,
+      country: DataTypes.STRING,
+      region: DataTypes.STRING,
+      zone: DataTypes.STRING,
+      woreda: DataTypes.STRING,
+      kebele: DataTypes.STRING,
+      city: DataTypes.STRING,
+      subCity: DataTypes.STRING,
+      houseNumber: DataTypes.STRING,
     },
     {
       sequelize,

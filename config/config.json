@@ -4,7 +4,8 @@
     "password": null,
     "database": "address_db",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "logging": false
   },
   "test": {
     "username": "root",
@@ -19,6 +20,7 @@
     "database": "stock_db",
     "host": "10.180.50.214",
     "port": "3306",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "logging": false
   }
 }
