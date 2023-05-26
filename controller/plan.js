@@ -25,12 +25,11 @@ exports.createPlan = (req, res, next) => {
   var planData = req.body;
 
   workflow.on('validateData', (planData) => {
-    if (!planData.roadMap || planData.roadMap === '') {
-      return res.status(400).json({ message: 'እባክዎ ፕላንዎን ያስገቡ' });
+    if (!planData.orgId || planData.orgId === '') {
+      return res.status(400).json({ message: 'እባክዎ ' });
     }
 
     workflow.emit('checkPlanExist', planData);
-    //workflow.emit('createPlan', planData);
   });
 
   workflow.on('checkPlanExist', (planData) => {
@@ -237,15 +236,11 @@ exports.fetchAll = (req, res, next) => {
       if (plans && plans.length > 0) {
         workflow.emit('respond', plans);
       } else {
-        return res.status(400).json({
-          message: 'በዚህ መለያ የተመዘገበ ድርጅት የለም',
-        });
+        return res.status(400).json([]);
       }
     });
   });
-
   workflow.on('respond', (plans) => {
-    // delete user.password;
     res.status(200).json(plans);
   });
 
@@ -282,7 +277,6 @@ exports.fetchAllByPagination = (req, res, next) => {
           message: 'ሰርቨሩ እየሰራ አይደለም',
         });
       }
-
       workflow.emit('respond', plans);
     });
   });

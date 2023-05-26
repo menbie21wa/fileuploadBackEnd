@@ -26,8 +26,8 @@ module.exports = {
         type: Sequelize.STRING,
       },
       type: {
-        type: Sequelize.ENUM('stock', 'plc', 'partnership'),
-        defaultValue: 'plc',
+        type: Sequelize.ENUM('sc', 'plc', 'partners'),
+
         allowNull: false,
       },
       streetNumber: {
@@ -56,10 +56,34 @@ module.exports = {
         type: Sequelize.STRING,
       },
       establishment: {
-        type: Sequelize.STRING,
+        type: Sequelize.TEXT,
       },
       capital: {
         type: Sequelize.DECIMAL,
+      },
+      country: {
+        type: Sequelize.STRING,
+      },
+      region: {
+        type: Sequelize.STRING,
+      },
+      zone: {
+        type: Sequelize.STRING,
+      },
+      woreda: {
+        type: Sequelize.STRING,
+      },
+      kebele: {
+        type: Sequelize.STRING,
+      },
+      city: {
+        type: Sequelize.STRING,
+      },
+      subCity: {
+        type: Sequelize.STRING,
+      },
+      houseNummber: {
+        type: Sequelize.STRING,
       },
       employees: {
         type: Sequelize.INTEGER,

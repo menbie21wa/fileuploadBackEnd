@@ -25,13 +25,12 @@ exports.createJobSkill = (req, res, next) => {
   var jobSkillData = req.body;
 
   workflow.on('validateData', (jobSkillData) => {
-    if (!jobSkillData.skill || jobSkillData.skill === '') {
+    if (!jobSkillData.skill) {
       return res.status(400).json({ message: 'እባክዎ ስኪልዎን ያስገቡ' });
     }
-    if (!jobSkillData.orgId || jobSkillData.orgId === '') {
+    if (!jobSkillData.orgId) {
       return res.status(400).json({ message: 'የድርጅትዎን መለያ ያስገቡ' });
     }
-    //workflow.emit('createJobSkills', jobSkillData);
 
     workflow.emit('checkJobSkillExist', jobSkillData);
   });
@@ -50,7 +49,7 @@ exports.createJobSkill = (req, res, next) => {
         });
       }
 
-      if (jobSkill === null || jobSkill === undefined) {
+      if (jobSkill) {
         workflow.emit('createJobSkill', jobSkillData);
       } else {
         return res.status(400).json({
@@ -90,7 +89,7 @@ exports.fetchOne = (req, res, next) => {
           message: 'ሰርቨሩ እየሰራ አይደለም',
         });
       }
-      if (!skill || skill === null || skill === undefined) {
+      if (!skill) {
         return res.status(400).json({
           message: 'በዚህ መለያ የተመዘገበ የስራ ስኪል የለም',
         });
@@ -123,7 +122,7 @@ exports.update = (req, res, next) => {
           message: 'ሰርቨሩ እየሰራ አይደለም',
         });
       }
-      if (!job_skill || job_skill === null || job_skill === undefined) {
+      if (!job_skill) {
         return res.status(400).json({
           message: 'በዚህ መለያ የተመዘገበ አክሲዎን የለም',
         });

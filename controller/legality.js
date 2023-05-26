@@ -74,7 +74,6 @@ exports.createLegality = (req, res, next) => {
     }
     legalityData['orgId'] = legalityData.orgId;
 
-    //workflow.emit('create', legalityData);
     workflow.emit('checkLegalityExist', legalityData);
   });
 
@@ -134,7 +133,7 @@ exports.fetchOne = (req, res, next) => {
           message: 'ሰርቨሩ እየሰራ አይደለም',
         });
       }
-      if (legality || legality !== undefined) {
+      if (legality) {
         workflow.emit('respond', legality);
       } else {
         return res.status(400).json({
@@ -167,7 +166,7 @@ exports.update = (req, res, next) => {
           message: 'ሰርቨሩ እየሰራ አይደለም',
         });
       }
-      if (!legality || legality === null || legality === undefined) {
+      if (!legality) {
         return res.status(400).json({
           message: 'በዚህ መለያ የተመዘገበ ሃሳብ የለም',
         });
@@ -280,18 +279,14 @@ exports.fetchAll = (req, res, next) => {
           message: 'ሰርቨሩ እየሰራ አይደለም',
         });
       }
-      if (legalities && legalities.length > 0) {
-        workflow.emit('respond', legalities);
-      } else {
-        return res.status(400).json({
-          message: 'በዚህ መለያ የተመዘገበ የለም',
-        });
+      if (!legalities) {
+        return res.status(200).json([]);
       }
+      workflow.emit('respond', legalities);
     });
   });
 
   workflow.on('respond', (legalities) => {
-    // delete user.password;
     res.status(200).json(legalities);
   });
 

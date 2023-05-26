@@ -6,7 +6,12 @@ var authorization = require('../lib/authorization');
 
 var organizationController = require('../controller/organization');
 
-router.post('/create', organizationController.createOrg);
+router.post(
+  '/create',
+  authenticate,
+  authorization(['super_admin', 'user']),
+  organizationController.createOrg
+);
 
 router.get('/all', organizationController.fetchAll);
 

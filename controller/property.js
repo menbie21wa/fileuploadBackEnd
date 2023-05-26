@@ -234,9 +234,7 @@ exports.fetchAll = (req, res, next) => {
       if (property && property.length > 0) {
         workflow.emit('respond', property);
       } else {
-        return res.status(400).json({
-          message: 'በዚህ መለያ የተመዘገበ ድርጅት የለም',
-        });
+        return res.status(400).json([]);
       }
     });
   });
