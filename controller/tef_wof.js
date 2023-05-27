@@ -18,7 +18,8 @@ exports.createTef_Wof = (req, res, next) => {
   
     var workflow = new EventEmitter();
   
-    var tefData =JSON.parse(JSON.stringify(req.body));
+    // var tefData =JSON.parse(JSON.stringify(req.body));
+    var tefData =req.body;
     //console.log("ተፍ",tefData)
   
     workflow.on("validateTefWofData", (tefData) => {
@@ -67,9 +68,9 @@ exports.createTef_Wof = (req, res, next) => {
         where: {
             userId: tefData.userId,
         },
-        where: {
-          orgId: tefData.orgId,
-      },
+      //   where: {
+      //     orgId: tefData.orgId,
+      // },
       };
       // console.log("user id :"+userId);
 

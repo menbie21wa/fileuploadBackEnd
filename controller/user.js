@@ -505,3 +505,143 @@ exports.userLogin = (req, res, next) => {
 
   workflow.emit('validateData', userData);
 };
+exports.ForgotPassword = (req, res, next) => {
+  console.log("FORGOT PASSWORD");
+
+  var workflow = new EventEmitter();
+  var userData = req.body;
+  workflow.on('validateUser',(userData)=>{
+
+    if(!userData.email || userData.email===''){
+      return res.status(400).json({
+        message: "ኢሜል አስቀምጥ",
+      })
+    }
+workflow.emit('checkUserExist', userData);
+});
+  workflow.on('checkUserExist', (userData) => {
+    
+   console.log("userEmail",userData);
+    let userQuery = {
+      where: {
+        email: userData.email,
+      },
+    };
+    UserDal.get(userQuery, (err, user) => {
+      if (err) {
+        return res.status(500).json({
+          message: 'ሰርቨሩ እየሰራ አይደለም',
+        });
+      }
+      // if (user) {
+      //   workflow.emit('hashPassword', userData);
+      // } 
+      else {
+        return res.status(400).json({
+          message: 'ባስገቡት መረጃ የተመዘገበ ሰው የለም',
+        });
+      }
+    });
+    
+    // workflow.on('hashPassword', (userData) =>{
+
+    //   // console.log('hash password');
+    //   bcrypt.hash(userData.password, 10, (err, hash) => {
+    //     if (err) {
+    //       return res.status(500).json({
+    //         message: 'ሰርቨሩ እየሰራ አይደለም',
+    //       });
+    //     }
+    //     userData.password = hash;
+    //     workflow.emit('updatePassword', userData);
+    //   });
+    // });
+    // workflow.on("updatePassword", (userData) => {
+    //   let query = userData.id;
+  
+    //   let updateData = {
+    //     password: userData.password,
+    //   };
+  
+    //   UserDal.update(query, updateData, (err, updatedUser) => {
+    //     if (err) {
+    //       res.status(500).json({
+    //         name: "UPDATE_USER_ERROR",
+    //         message: err.message,
+    //       });
+  
+    //       workflow.emit("respond", updatedUser);
+    //     }
+    //   });
+    // });
+    // workflow.on("respond", (updatedUser) => {
+    //   res.status(200).json({
+    //     message: "Your password rested succesfully",
+    //   });
+    //   return;
+    // });
+  });
+workflow.emit('validateUser',userData);
+};
+
+exports.ConfirmPassword = (req, res, next) =>{
+
+  var workflow = new EventEmitter();
+  var userData = req.body;
+  let path = [];
+  workflow.on('validatePassword',(userData)=>{
+     if(!userData.password || userData.password===''){
+      return res.status(400).json({
+           message: 'የይለፍ ቃል አስገባ',
+      });
+     }
+     else{
+      // return res.status(400).json({
+      //   message: 'ባስገቡት መረጃ የተመዘገበ ሰው የለም',
+      // })
+      workflow.emit('hashPassword', userData);
+     }
+    });
+     workflow.on('hashPassword',(userData)=>{
+            console.log('password',userData.password);
+
+            bcrypt.hash(userData.password, 10, (err, hash) => {
+              if (err) {
+                return res.status(500).json({
+                  message: 'ሰርቨሩ እየሰራ አይደለም',
+                });
+              }
+              userData.password = hash;
+                 workflow.emit('updatePassword', userData, path);
+                 console.log('password:',userData.password);
+            });
+            // console.log('password :',userData.password);
+     })
+workflow.on("updatePassword", (userData) => {
+      let query = userData.id;
+  console.log('updatePassword 12345');
+      let updateData = {
+        password: userData.password,
+      };
+  
+      UserDal.updatePass(updateData, (err, updatedUser) => {
+        console.log("update page1", updatedUser);
+        if (err) {
+          return res.status(500).json({
+            name: "UPDATE_USER_ERROR",
+            message: err.message,
+          });
+  
+          workflow.emit("respond", updatedUser);
+        }
+      });
+    });
+    workflow.on("respond", (updatedUser) => {
+      return res.status(200).json({
+        message: "Your password rested succesfully",
+      });
+      
+    });
+
+  workflow.emit('validatePassword',userData);
+};

@@ -19,7 +19,8 @@ router.get('/:id', userController.fetchOne);
 
 router.post('/login', userController.userLogin);
 
-// router.post("/forgotpassword", userController.ForgotPassword);
+router.post("/forgotpassword", userController.ForgotPassword);
+router.put('/resetpassword', userController.ConfirmPassword);
 
 router.put(
   '/:id',

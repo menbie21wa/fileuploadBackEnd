@@ -93,3 +93,14 @@ exports.update = async (updates, query, cb) => {
     return cb(err);
   }
 };
+
+exports.updatePass = async (updates,cb) => {
+  console.log('updatePage');
+  try {
+    let updatedData = await User.update(updates);
+    console.log('update dal 12: ',updatedData);
+    return cb(null, updatedData);
+  } catch (err) {
+    return cb(err);
+  }
+};
