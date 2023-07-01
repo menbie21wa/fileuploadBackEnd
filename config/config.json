@@ -2,9 +2,10 @@
   "development": {
     "username": "root",
     "password": null,
-    "database": "address_db",
+    "database": "eplusappfile_db",
     "host": "127.0.0.1",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "logging": false
   },
   "test": {
     "username": "root",
@@ -14,11 +15,12 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "eplusapp",
+    "username": "eplusappfile",
     "password": "8Aa48z4~h",
-    "database": "stock_db",
+    "database": "eplusappfile_db",
     "host": "10.180.50.214",
     "port": "3306",
-    "dialect": "mysql"
+    "dialect": "mysql",
+    "logging": false
   }
 }
